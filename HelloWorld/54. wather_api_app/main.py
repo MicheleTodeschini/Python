@@ -21,23 +21,21 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         # ALL REGARDING THE INPUT 
         self.line_edit = QLineEdit()
-        self.line_edit.setStyleSheet("font-size: 30px;")
         self.line_edit.setPlaceholderText("Type the city")
+        self.line_edit.setGeometry(10, 0, 200, 40)
+        self.line_edit.setStyleSheet("font-size: 30px; border-radius: 15px;")
+
          # ALL REGARDING THE BUTTON 
         self.button = QPushButton("Search")
         self.button.setStyleSheet( "font-size: 20px; font-family: Arial;" )
-        # ALL REGARDING LINE EDIT
-        self.line_edit.setGeometry(10, 10, 200, 40)
-        self.line_edit.setStyleSheet("font-size: 30px;")
-        self.line_edit.setPlaceholderText("Type the city")
-        # ALL REGARDING THR BUTTON
-        self.button.setGeometry(210, 10, 100, 40)
-        self.button.setStyleSheet("font-size: 20px; font-family: Arial;")
+        self.button.setGeometry(210, 0, 100, 40)
+        self.button.setStyleSheet("font-size: 20px; font-family: Arial; background-color: #3db6f2; color: white;")
         self.button.clicked.connect(self.submit_and_get_info)
+
         # ALL REGARDING THE LABELS
-        self.labelTop = QLabel("top")
-        self.labelCenter = QLabel("center")
-        self.labelBottom = QLabel("bottom")
+        self.labelTop = QLabel("")
+        self.labelCenter = QLabel("")
+        self.labelBottom = QLabel("")
         self.labelTop.setStyleSheet("font-size: 50px;")
         self.labelCenter.setStyleSheet("font-size: 50px;")
         self.labelBottom.setStyleSheet("font-size: 50px;")
@@ -63,7 +61,7 @@ class MainWindow(QMainWindow):
     def submit_and_get_info(self):
         print("tasto premuto")
         text = self.line_edit.text()
-        url = f"{base_url}{text}&appid={api_key}"
+        url = f"{base_url}{text}&appid={api_key}&units=metric"
 
         res = requests.get(url)
 
@@ -74,28 +72,40 @@ class MainWindow(QMainWindow):
             print(weather_data)
             
 
-        weather = weather_data["weather"][0]["main"]
+            weather = weather_data["weather"][0]["main"]
+            temperature = weather_data["main"]["temp"]
         
-        if weather == "Thunderstorm":
-            self.labelTop.setText("⛈️")
+            if weather == "Thunderstorm":
+                self.labelTop.setText("⛈️")
 
-        elif weather == "Drizzle":
-            self.labelTop.setText("🌦️")
+            elif weather == "Drizzle":
+                self.labelTop.setText("🌦️")
 
-        elif weather == "Rain":
-            self.labelTop.setText("🌧️")
+            elif weather == "Rain":
+                self.labelTop.setText("🌧️")
 
-        elif weather == "Snow":
-            self.labelTop.setText("❄️")
+            elif weather == "Snow":
+                self.labelTop.setText("❄️")
 
-        elif weather == "Clear":
-            self.labelTop.setText("☀️")
+            elif weather == "Clear":
+                self.labelTop.setText("☀️")
 
-        elif weather == "Clouds":
-            self.labelTop.setText("☁️")
-            return weather  
+            elif weather == "Clouds":
+                self.labelTop.setText("☁️")
+
+
+
+            self.labelCenter.setText(f"{temperature:.1f} °C")
+            self.labelBottom.setText(f"{text}")
+            self.line_edit.setText("")
+
+            
+             
         else:
             print(f"Failed to retrieve data {res.status_code}")
+
+
+        
 
 
 
