@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QLineEdi
 from PyQt5.QtCore import Qt
 
 base_url = "https://api.openweathermap.org/data/2.5/weather?q="
-api_key = "use your own eheh"
+api_key = ""
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -63,16 +63,37 @@ class MainWindow(QMainWindow):
     def submit_and_get_info(self):
         print("tasto premuto")
         text = self.line_edit.text()
-        url = f"{base_url}{text},IT&appid={api_key}"
+        url = f"{base_url}{text}&appid={api_key}"
 
         res = requests.get(url)
-        
+
         if res.status_code == 200:
+
             weather_data = res.json()
+
             print(weather_data)
-        if weather_data["weather"][0]["main"] == "Clouds":
+            
+
+        weather = weather_data["weather"][0]["main"]
+        
+        if weather == "Thunderstorm":
+            self.labelTop.setText("⛈️")
+
+        elif weather == "Drizzle":
+            self.labelTop.setText("🌦️")
+
+        elif weather == "Rain":
+            self.labelTop.setText("🌧️")
+
+        elif weather == "Snow":
+            self.labelTop.setText("❄️")
+
+        elif weather == "Clear":
+            self.labelTop.setText("☀️")
+
+        elif weather == "Clouds":
             self.labelTop.setText("☁️")
-            return weather_data
+            return weather  
         else:
             print(f"Failed to retrieve data {res.status_code}")
 
