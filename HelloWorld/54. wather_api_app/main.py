@@ -22,13 +22,11 @@ class MainWindow(QMainWindow):
         # ALL REGARDING THE INPUT 
         self.line_edit = QLineEdit()
         self.line_edit.setPlaceholderText("Type the city")
-        self.line_edit.setGeometry(10, 0, 200, 40)
         self.line_edit.setStyleSheet("font-size: 30px; border-radius: 15px;")
 
          # ALL REGARDING THE BUTTON 
         self.button = QPushButton("Search")
         self.button.setStyleSheet( "font-size: 20px; font-family: Arial;" )
-        self.button.setGeometry(210, 0, 100, 40)
         self.button.setStyleSheet("font-size: 20px; font-family: Arial; background-color: #3db6f2; color: white;")
         self.button.clicked.connect(self.submit_and_get_info)
 
@@ -50,7 +48,6 @@ class MainWindow(QMainWindow):
         hbox.addWidget(self.button)
         vbox = QVBoxLayout()
         vbox.addLayout(hbox)
-        vbox.setAlignment(Qt.AlignCenter)
         vbox.addWidget(self.labelTop)
         vbox.addWidget(self.labelCenter)
         vbox.addWidget(self.labelBottom)
