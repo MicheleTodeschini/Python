@@ -17,6 +17,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # DA BUTTARE QUESTA VARIABILE
+        self.counter = 0
+
         self.setWindowTitle("Camera Recognition")
         self.setGeometry(700, 200, 800, 600)
 
@@ -95,7 +98,33 @@ class MainWindow(QMainWindow):
 
         # creazione dei landmark sulla mano
         if result.hand_landmarks:
-            print(result)
+            # print(result)
+
+            points = []
+            for landmark in result.hand_landmarks[0]:
+                points.append((landmark.x, landmark.y, landmark.z))
+
+            thumb_base = points[1]
+            thumb_tip = points[4]
+            index_base = points[5]
+            index_tip = points[8]
+            middle_base = points[9]
+            middle_tip = points[12]
+            ring_base = points[13]
+            ring_tip = points[16]
+            pinky_base = points[17]
+            pinky_tip = points[20]
+            # print(index_tip)
+
+            if (
+                index_tip[1] < middle_tip[1]
+                and ring_tip[1] < middle_tip[1]
+                and pinky_tip[1] < middle_tip[1]
+            ):
+                self.counter += 1
+                print("gas full gas", self.counter)
+                gesture = "three_up"
+                self.changed_gesture.emit(gesture)
 
             for hand_landmarks in result.hand_landmarks:
 
@@ -175,9 +204,38 @@ class ImageWindow(QMainWindow):
 
         self.setWindowTitle("Image")
         self.setGeometry(700, 200, 800, 600)
+        self.image_label = QLabel()
+        layout = QVBoxLayout()
+        layout.addWidget(self.image_label)
+        central_widget = QWidget()
+        central_widget.setLayout(layout)
 
-        def show_image(self):
-            pass
+        self.setCentralWidget(central_widget)
+
+        self.gesture = None
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.show_image)
+        self.timer.start(30)
+
+    def update_gesture(self, gesture):
+        self.gesture = gesture
+
+    def show_image(self):
+
+        if self.gesture == "three_up":
+            three_up = cv2.imread(
+                r"C:\Users\ASUS\Desktop\progetti vsc\Python\HelloWorld\55. webcam_recognition_hand\photo\three_up.jpg"
+            )
+            height, width, channel = three_up.shape
+            bytes_per_line = channel * width
+            q_three_up = QImage(
+                three_up.data, width, height, bytes_per_line, QImage.Format_BGR888
+            )
+            pixmap = QPixmap.fromImage(q_three_up)
+            self.image_label.setPixmap(
+                pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio)
+            )
 
 
 def main():
@@ -192,6 +250,7 @@ def main():
 
     image.show()
 
+    window.changed_gesture.connect(image.update_gesture)
     sys.exit(app.exec_())
 
 
