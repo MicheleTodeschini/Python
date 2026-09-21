@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
             for landmark in result.hand_landmarks[0]:
                 points.append((landmark.x, landmark.y, landmark.z))
 
+            wrist = points[0]
             thumb_base = points[1]
             thumb_tip = points[4]
             index_base = points[5]
@@ -122,8 +123,32 @@ class MainWindow(QMainWindow):
                 and pinky_tip[1] < middle_tip[1]
             ):
                 self.counter += 1
-                print("gas full gas", self.counter)
+                print("three_up", self.counter)
                 gesture = "three_up"
+                self.changed_gesture.emit(gesture)
+            elif thumb_tip[1] > wrist[1]:
+                self.counter += 1
+                print("thumb_down", self.counter)
+                gesture = "thumb_down"
+                self.changed_gesture.emit(gesture)
+            elif (
+                thumb_tip[1] < ring_tip[1]
+                and index_tip[1] < ring_tip[1]
+                and middle_tip[1] < ring_tip[1]
+                and thumb_tip[1] < pinky_tip[1]
+                and index_tip[1] < pinky_tip[1]
+                and middle_tip[1] < pinky_tip[1]
+            ):
+                self.counter += 1
+                print("pistol", self.counter)
+                gesture = "pistol"
+                self.changed_gesture.emit(gesture)
+            elif all(
+                tip[1] < finger[1]
+                for tip in [thumb_tip, index_tip, pinky_tip]
+                for finger in [middle_tip, ring_tip]
+            ):
+                gesture = "spiderman"
                 self.changed_gesture.emit(gesture)
 
             for hand_landmarks in result.hand_landmarks:
@@ -233,6 +258,45 @@ class ImageWindow(QMainWindow):
                 three_up.data, width, height, bytes_per_line, QImage.Format_BGR888
             )
             pixmap = QPixmap.fromImage(q_three_up)
+            self.image_label.setPixmap(
+                pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio)
+            )
+        elif self.gesture == "thumb_down":
+            thumb_down = cv2.imread(
+                r"C:\Users\ASUS\Desktop\progetti vsc\Python\HelloWorld\55. webcam_recognition_hand\photo\thumb_down.png"
+            )
+            height, width, channel = thumb_down.shape
+            bytes_per_line = channel * width
+            q_thumb_down = QImage(
+                thumb_down.data, width, height, bytes_per_line, QImage.Format_BGR888
+            )
+            pixmap = QPixmap.fromImage(q_thumb_down)
+            self.image_label.setPixmap(
+                pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio)
+            )
+        elif self.gesture == "pistol":
+            pistol = cv2.imread(
+                r"C:\Users\ASUS\Desktop\progetti vsc\Python\HelloWorld\55. webcam_recognition_hand\photo\pistol.jpg"
+            )
+            height, width, channel = pistol.shape
+            bytes_per_line = channel * width
+            q_pistol = QImage(
+                pistol.data, width, height, bytes_per_line, QImage.Format_BGR888
+            )
+            pixmap = QPixmap.fromImage(q_pistol)
+            self.image_label.setPixmap(
+                pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio)
+            )
+        elif self.gesture == "spiderman":
+            spiderman = cv2.imread(
+                r"C:\Users\ASUS\Desktop\progetti vsc\Python\HelloWorld\55. webcam_recognition_hand\photo\spiderman.jpg"
+            )
+            height, width, channel = spiderman.shape
+            bytes_per_line = channel * width
+            q_spiderman = QImage(
+                spiderman.data, width, height, bytes_per_line, QImage.Format_BGR888
+            )
+            pixmap = QPixmap.fromImage(q_spiderman)
             self.image_label.setPixmap(
                 pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio)
             )
