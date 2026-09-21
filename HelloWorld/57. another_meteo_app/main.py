@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QVBoxLayout,
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 
@@ -23,6 +24,14 @@ class MainWindow(QMainWindow):
         self.setGeometry(700, 200, 500, 500)
 
         self.initUI()
+
+    def initUI(self):
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+
+        self.line_edit = QLineEdit()
+        self.line_edit.setPlaceholderText("Search your city here")
+        self.line_edit.setStyleSheet("font-size: 30px; border-radius: 15px;")
 
 
 def main():
