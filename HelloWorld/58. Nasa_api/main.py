@@ -8,12 +8,15 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QMainWindow,
     QScrollArea,
+    QPushButton,
 )
 
 import json
 
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
+
+from datetime import datetime, timedelta
 
 
 class MainWindow(QMainWindow):
@@ -50,7 +53,24 @@ class MainWindow(QMainWindow):
         self.ExplanationLabel.setTextFormat(Qt.RichText)
         self.ExplanationLabel.setOpenExternalLinks(True)
 
+        self.next_button = QPushButton("Next➡️")
+        self.next_button.setStyleSheet(
+            "font-size: 15px; font-family: Arial; background-color: #a4a6a6; color: white;"
+        )
+        self.next_button.clicked.connect(self.fetch_next)
+
+        self.previous_button = QPushButton("⬅️Previous")
+        self.previous_button.setStyleSheet(
+            "font-size: 15px; font-family: Arial; background-color: #a4a6a6; color: white;"
+        )
+        self.previous_button.clicked.connect(self.fetch_previous)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.previous_button)
+        hbox.addWidget(self.next_button)
+
         vbox = QVBoxLayout()
+        vbox.addLayout(hbox)
         vbox.addWidget(self.TitleLabel)
         vbox.addWidget(self.NameLabel)
         vbox.addWidget(self.DateLabel)
@@ -65,26 +85,32 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(scroll)
 
     # APOD is referring to Astheroid Picture of the Day
-    def fetch_apod(self):
+    def fetch_apod(self, date=None):
 
         api_key = ""
-        apod_url = "https://science.nasa.gov/wp-json/wp/v2/apod-basic/"
+        self.apod_url = "https://api.nasa.gov/planetary/apod"
 
-        url = f"{apod_url}?api_key={api_key}"
+        self.params = {"api_key": api_key}
+
+        if date is not None:
+            self.params["date"] = date
 
         try:
-            res = requests.get(url)
+            res = requests.get(self.apod_url, params=self.params)
 
             data = res.json()
-            print(json.dumps(data[0], indent=4))
-            print(data[0]["title"])
-            print(data[0]["date"])
-            print(data[0]["hdurl"])
-            self.NameLabel.setText(data[0]["title"])
-            self.DateLabel.setText(data[0]["date"])
-            self.ExplanationLabel.setText(data[0]["explanation"])
+            print(json.dumps(data, indent=4))
+            print(data["title"])
+            print(data["date"])
+            print(data["hdurl"])
+            self.NameLabel.setText(data["title"])
+            self.DateLabel.setText(data["date"])
+            self.ExplanationLabel.setText(data["explanation"])
 
-            image_res = requests.get(data[0]["hdurl"])
+            self.current_date = datetime.strptime(data["date"], "%Y-%m-%d")
+            print(self.current_date)
+
+            image_res = requests.get(data["hdurl"])
             self.pixmap.loadFromData(image_res.content)
             scaled_pixmap = self.pixmap.scaled(
                 450, 300, Qt.KeepAspectRatio, Qt.SmoothTransformation
@@ -93,6 +119,25 @@ class MainWindow(QMainWindow):
 
         except requests.RequestException as e:
             print(f"Error when fetching the data: {e}")
+
+    def fetch_next(self):
+
+        self.current_date += timedelta(days=1)
+
+        self.now = datetime.today()
+
+        if self.now < self.current_date:
+            print("nse po fa")
+
+        print(self.current_date)
+
+    def fetch_previous(self):
+
+        previous_date = self.current_date - timedelta(days=1)
+
+        self.fetch_apod(previous_date.strftime("%Y-%m-%d"))
+
+        print(previous_date)
 
 
 def main():

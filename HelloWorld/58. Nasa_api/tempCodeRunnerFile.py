@@ -1,2 +1,1 @@
-
-            data = res.json()
+        self.next_button = QPushButton("Next")
