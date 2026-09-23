@@ -122,12 +122,15 @@ class MainWindow(QMainWindow):
 
     def fetch_next(self):
 
-        self.current_date += timedelta(days=1)
+        next_date = self.current_date + timedelta(days=1)
 
         self.now = datetime.today()
 
-        if self.now < self.current_date:
+        if next_date > self.now:
             print("nse po fa")
+            return
+
+        self.fetch_apod(next_date.strftime("%Y-%m-%d"))
 
         print(self.current_date)
 
