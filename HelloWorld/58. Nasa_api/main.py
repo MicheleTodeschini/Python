@@ -95,7 +95,7 @@ class MainWindow(QMainWindow):
     # APOD is referring to Astheroid Picture of the Day
     def fetch_apod(self, date=None):
 
-        api_key = "yx2QIBSt7CmsSvgT5VbjQ7oX7fRoI0Ml8J3NA3Nc"
+        api_key = ""
         self.apod_url = "https://api.nasa.gov/planetary/apod"
 
         self.params = {"api_key": api_key}
