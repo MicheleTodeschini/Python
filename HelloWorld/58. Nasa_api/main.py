@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QScrollArea,
     QPushButton,
+    QLineEdit,
 )
 
 import json
@@ -35,6 +36,13 @@ class MainWindow(QMainWindow):
 
         self.TitleLabel = QLabel("NASA DASHBOARD")
         self.TitleLabel.setStyleSheet("font-size:30px; font-family: Arial;")
+
+        self.line_edit = QLineEdit()
+        self.line_edit.setPlaceholderText("Insert the date")
+        self.line_edit.setStyleSheet("font-size: 30px; border-radius: 15px;")
+
+        self.search_button = QPushButton("Search")
+        self.search_button.setStyleSheet("font-size: 15px; font-family: Arial;")
 
         self.NameLabel = QLabel("")
         self.NameLabel.setStyleSheet("font-size:20px; font-family: Arial;")
@@ -87,7 +95,7 @@ class MainWindow(QMainWindow):
     # APOD is referring to Astheroid Picture of the Day
     def fetch_apod(self, date=None):
 
-        api_key = ""
+        api_key = "yx2QIBSt7CmsSvgT5VbjQ7oX7fRoI0Ml8J3NA3Nc"
         self.apod_url = "https://api.nasa.gov/planetary/apod"
 
         self.params = {"api_key": api_key}
