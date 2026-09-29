@@ -135,7 +135,7 @@ class MainWindow(QMainWindow):
         self.now = datetime.today()
 
         if next_date > self.now:
-            print("nse po fa")
+            print("Hey, don't think about tomorrow, think about today!")
             return
 
         self.fetch_apod(next_date.strftime("%Y-%m-%d"))
