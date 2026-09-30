@@ -166,7 +166,8 @@ class MainWindow(QMainWindow):
         print("gasi")
 
         date_from_search = self.line_edit.text()
-        print(date_from_search)
+
+        self.fetch_apod(date_from_search)
 
 
 def main():
