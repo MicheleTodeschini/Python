@@ -42,7 +42,10 @@ class MainWindow(QMainWindow):
         self.line_edit.setStyleSheet("font-size: 30px; border-radius: 15px;")
 
         self.search_button = QPushButton("Search")
-        self.search_button.setStyleSheet("font-size: 15px; font-family: Arial;")
+        self.search_button.setStyleSheet(
+            "font-size: 15px; font-family: Arial; color: white; background-color: black;"
+        )
+        self.search_button.clicked.connect(self.fetch_from_search)
 
         self.NameLabel = QLabel("")
         self.NameLabel.setStyleSheet("font-size:20px; font-family: Arial;")
@@ -77,8 +80,13 @@ class MainWindow(QMainWindow):
         hbox.addWidget(self.previous_button)
         hbox.addWidget(self.next_button)
 
+        hbox2 = QHBoxLayout()
+        hbox2.addWidget(self.line_edit)
+        hbox2.addWidget(self.search_button)
+
         vbox = QVBoxLayout()
         vbox.addLayout(hbox)
+        vbox.addLayout(hbox2)
         vbox.addWidget(self.TitleLabel)
         vbox.addWidget(self.NameLabel)
         vbox.addWidget(self.DateLabel)
@@ -95,18 +103,22 @@ class MainWindow(QMainWindow):
     # APOD is referring to Astheroid Picture of the Day
     def fetch_apod(self, date=None):
 
-        api_key = ""
-        self.apod_url = "https://api.nasa.gov/planetary/apod"
+        if date is None:
+            date = datetime.today().strftime("%Y-%m-%d")
 
-        self.params = {"api_key": api_key}
+        nasa_date = datetime.strptime(date, "%Y-%m-%d").strftime("%y%m%d")
 
-        if date is not None:
-            self.params["date"] = date
+        self.apod_url = f"https://science.nasa.gov/wp-json/wp/v2/apod-basic/{nasa_date}"
 
         try:
-            res = requests.get(self.apod_url, params=self.params)
+            res = requests.get(self.apod_url)
 
             data = res.json()
+
+            print("STATUS:", res.status_code)
+            print("URL:", res.url)
+            print("RESPONSE:", res.text[:1000])
+
             print(json.dumps(data, indent=4))
             print(data["title"])
             print(data["date"])
@@ -149,6 +161,12 @@ class MainWindow(QMainWindow):
         self.fetch_apod(previous_date.strftime("%Y-%m-%d"))
 
         print(previous_date)
+
+    def fetch_from_search(self):
+        print("gasi")
+
+        date_from_search = self.line_edit.text()
+        print(date_from_search)
 
 
 def main():

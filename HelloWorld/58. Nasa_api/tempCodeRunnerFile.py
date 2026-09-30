@@ -1,1 +1,2 @@
-        self.next_button = QPushButton("Next")
+
+    # APOD is referring to Astheroid Picture of the Day
